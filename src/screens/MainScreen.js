@@ -5,12 +5,14 @@ import {
   StyleSheet,
   Button
 } from 'react-native';
+import Header from '../components/common/Header';
 
 
-class HomeScreen extends Component{
+class MainScreen extends Component{
   render(){
     return (
       <View>
+        <Header headerText="Mission" />
         <Text> This is the Homescreen </Text>
         <Button
           title="Gallery"
@@ -21,4 +23,4 @@ class HomeScreen extends Component{
   }
 }
 
-export default HomeScreen;
+export default MainScreen;

@@ -11,7 +11,7 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { StackNavigator } from 'react-navigation';
-import HomeScreen from './src/screens/HomeScreen';
+import MainScreen from './src/screens/MainScreen';
 import Gallery from './src/screens/Gallery';
 
 export default class App extends React.Component {
@@ -23,7 +23,7 @@ export default class App extends React.Component {
 }
 
 const AppNavigator = StackNavigator({
-  HomeScreen: {screen : HomeScreen},
+  MainScreen: {screen : MainScreen},
   Gallery: {screen : Gallery}
 })
 
