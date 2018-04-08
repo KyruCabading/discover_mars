@@ -9,10 +9,13 @@ import Header from '../components/common/Header';
 
 
 class MainScreen extends Component{
+  static navigationOptions = {
+    title: "Missions",
+  };
+
   render(){
     return (
       <View>
-        <Header headerText="Mission" />
         <Text> This is the Homescreen </Text>
         <Button
           title="Gallery"
