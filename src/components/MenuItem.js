@@ -36,7 +36,7 @@ class MenuItem extends Component{
   }
 
   render() {
-    const { image } = styles;
+    const { image, title } = styles;
     return (
           <TouchableWithoutFeedback
             onPressIn={() => this.onPressIn()}
@@ -46,6 +46,7 @@ class MenuItem extends Component{
               style={image,{transform:[{scale: this.state.animatePress}]}
             }>
               <Image style={image} source={this.props.image}></Image>
+              <Text style={title}>{this.props.title}</Text>
             </Animated.View>
           </TouchableWithoutFeedback>
     )
@@ -55,8 +56,15 @@ class MenuItem extends Component{
 const styles = StyleSheet.create({
   image: {
     width: 300,
-    height: 150,
+    height: 180,
     margin: 5
+  },
+  title: {
+    position: 'absolute',
+    bottom: 100,
+    right: 50,
+    fontSize: 24,
+    color: '#fff'
   }
 });
 
