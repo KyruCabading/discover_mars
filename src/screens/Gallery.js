@@ -6,6 +6,14 @@ import {
 } from 'react-native';
 
 class Gallery extends Component{
+  componentDidMount() {
+    this.makeRemoteRequest();
+  }
+
+  makeRemoteRequest = () => {
+    // Fetch Method
+  }
+
   render(){
     return (
       <View>
