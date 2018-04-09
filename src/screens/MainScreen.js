@@ -30,15 +30,15 @@ class MainScreen extends Component{
 
   onPressIn(){
     Animated.timing(this.state.animatePress,{
-      toValue:0.85,
-      duration: 200
+      toValue:0.96,
+      duration: 150
     }).start()
   }
 
   onPressOut() {
     Animated.timing(this.state.animatePress,{
       toValue:1,
-      duration: 200
+      duration: 150
     }).start()
     this.props.navigation.navigate('Gallery');
   }
