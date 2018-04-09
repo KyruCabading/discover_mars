@@ -1,15 +1,5 @@
-// import React from 'react';
-// import { StackNavigator } from 'react-navigation';
-//
-// const App = StackNavigator({
-//   Home: { screen: HomeScreen },
-//   Profile: { screen: ProfileScreen },
-// });
-//
-// export default App;
-
 import React from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View, AppRegistry } from 'react-native';
 import { StackNavigator } from 'react-navigation';
 import MainScreen from './src/screens/MainScreen';
 import Gallery from './src/screens/Gallery';
@@ -27,11 +17,4 @@ const AppNavigator = StackNavigator({
   Gallery: {screen : Gallery}
 })
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+AppRegistry.registerComponent('dicover_mars', () => AppNavigator);

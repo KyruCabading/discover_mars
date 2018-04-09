@@ -30,21 +30,25 @@ class MainScreen extends Component{
 
   onPressIn(){
     Animated.timing(this.state.animatePress,{
-      toValue:0.96,
-      duration: 150
+      toValue:0.85,
+      duration: 200
     }).start()
   }
 
   onPressOut() {
+    const { navigate } = this.props.navigation;
+
     Animated.timing(this.state.animatePress,{
       toValue:1,
-      duration: 150
+      duration: 200
     }).start()
-    this.props.navigation.navigate('Gallery');
+    
+    navigate('Gallery');
   }
 
   render() {
     const { image, container } = styles;
+
     return (
         <View style={container}>
           <TouchableWithoutFeedback
@@ -52,8 +56,7 @@ class MainScreen extends Component{
             onPressOut={() => this.onPressOut()}
           >
             <Animated.View
-              style={image,{transform:[{scale: this.state.animatePress}]}
-            }>
+              style={image,{transform:[{scale: this.state.animatePress}]}}>
               <Image style={{width: 200, height: 100}} source={require('../../assets/images/opportunity.jpg')}></Image>
             </Animated.View>
           </TouchableWithoutFeedback>

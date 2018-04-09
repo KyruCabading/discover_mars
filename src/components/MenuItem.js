@@ -35,11 +35,14 @@ class MenuItem extends Component{
   }
 
   onPressOut() {
+    const { navigate } = this.props.navigation;
+
     Animated.timing(this.state.animatePress,{
       toValue:1,
-      duration: 150
+      duration: 200
     }).start()
-    this.props.navigation.navigate('Gallery');
+
+    navigate('Gallery');
   }
 
   render() {
