@@ -8,29 +8,14 @@ import {
 import Header from '../components/common/Header';
 import MenuItem from '../components/MenuItem';
 import Gallery from './Gallery';
+import data from '../constants/data.json';
 
 class MainScreen extends Component{
   constructor(props) {
     super(props)
 
     this.state = {
-      data: [
-        {
-          id: "0",
-          name: "Curiosity",
-          image: require("../../assets/images/opportunity.jpg")
-        },
-        {
-          id: "1",
-          name: "Opportunity",
-          image: require("../../assets/images/opportunity.jpg")
-        },
-        {
-          id: "2",
-          name: "Spirit",
-          image: require("../../assets/images/opportunity.jpg")
-        }
-      ]
+      data: data
     }
 
   }
@@ -39,11 +24,18 @@ class MainScreen extends Component{
     console.log(this.state.data);
   }
 
+  selectedRover() {
+    return 1
+  }
+
   renderItem = ({item}) => (
     <MenuItem
-      title={item.name}
+      title={item.title}
       image={item.image}
-      onItemPress={() => this.props.navigation.navigate('Gallery')}
+      onItemPress={() => {this.props.navigation.navigate('Gallery', {
+          roverId: item.id
+        });
+      }}
     />
   )
 
@@ -54,10 +46,13 @@ class MainScreen extends Component{
     return (
       <View style={container}>
         <FlatList
-          data={this.state.data}
+          data={data}
           renderItem={this.renderItem}
           keyExtractor={item => item.id}
-          onItemPress={() => this.props.navigation.navigate('Gallery')}
+          onItemPress={() => {this.props.navigation.navigate('Gallery', {
+              roverId: []
+            });
+          }}
         />
       </View>
     )
