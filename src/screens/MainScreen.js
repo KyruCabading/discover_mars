@@ -5,13 +5,21 @@ import {
   StyleSheet,
   Button,
   Image,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Animated
 } from 'react-native';
 import Header from '../components/common/Header';
 import Colors from '../constants/Colors';
 
 
 class MainScreen extends Component{
+  constructor(){
+    super();
+    this.state = {
+      animatePress: new Animated.Value(1)
+    }
+  }
+
   static navigationOptions = {
     title: "Missions",
     headerStyle: {
@@ -20,15 +28,36 @@ class MainScreen extends Component{
      headerTintColor: '#fff'
   };
 
+  onPressIn(){
+    Animated.timing(this.state.animatePress,{
+      toValue:0.85,
+      duration: 200
+    }).start()
+  }
+
+  onPressOut() {
+    Animated.timing(this.state.animatePress,{
+      toValue:1,
+      duration: 200
+    }).start()
+    this.props.navigation.navigate('Gallery');
+  }
+
   render() {
+    const { image, container } = styles;
     return (
-      <TouchableWithoutFeedback>
-        <View style={styles.container}>
-          <View style={{width: 200, height: 100}}>
-            <Image style={{width: 200, height: 100}} source={require('../../assets/images/opportunity.jpg')}></Image>
-          </View>
+        <View style={container}>
+          <TouchableWithoutFeedback
+            onPressIn={() => this.onPressIn()}
+            onPressOut={() => this.onPressOut()}
+          >
+            <Animated.View
+              style={image,{transform:[{scale: this.state.animatePress}]}
+            }>
+              <Image style={{width: 200, height: 100}} source={require('../../assets/images/opportunity.jpg')}></Image>
+            </Animated.View>
+          </TouchableWithoutFeedback>
         </View>
-      </TouchableWithoutFeedback>
     )
   }
   // render(){
@@ -51,6 +80,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  image: {
+    width: 200,
+    height: 100
+  }
 });
 
 export default MainScreen;
