@@ -2,78 +2,68 @@ import React, { Component } from 'react';
 import {
   View,
   Text,
+  FlatList,
   StyleSheet,
-  Button,
-  Image,
-  TouchableWithoutFeedback,
-  Animated
 } from 'react-native';
 import Header from '../components/common/Header';
-import Colors from '../constants/Colors';
-
+import MenuItem from '../components/MenuItem';
+import Gallery from './Gallery';
 
 class MainScreen extends Component{
-  constructor(){
-    super();
+  constructor(props) {
+    super(props)
+
     this.state = {
-      animatePress: new Animated.Value(1)
+      data: [
+        {
+          id: "0",
+          name: "Curiosity",
+          image: require("../../assets/images/opportunity.jpg")
+        },
+        {
+          id: "1",
+          name: "Opportunity",
+          image: require("../../assets/images/opportunity.jpg")
+        },
+        {
+          id: "2",
+          name: "Spirit",
+          image: require("../../assets/images/opportunity.jpg")
+        }
+      ]
     }
+
   }
 
-  static navigationOptions = {
-    title: "Missions",
-    headerStyle: {
-       backgroundColor: Colors.main
-     },
-     headerTintColor: '#fff'
-  };
-
-  onPressIn(){
-    Animated.timing(this.state.animatePress,{
-      toValue:0.85,
-      duration: 200
-    }).start()
+  componentDidMount() {
+    console.log(this.state.data);
   }
 
-  onPressOut() {
-    const { navigate } = this.props.navigation;
+  renderItem = ({item}) => (
+    <MenuItem
+      title={item.name}
+      image={item.image}
+      onItemPress={() => this.props.navigation.navigate('Gallery')}
+    />
+  )
 
-    Animated.timing(this.state.animatePress,{
-      toValue:1,
-      duration: 200
-    }).start()
-    
-    navigate('Gallery');
-  }
 
   render() {
-    const { image, container } = styles;
+    const { container } = styles;
 
     return (
-        <View style={container}>
-          <TouchableWithoutFeedback
-            onPressIn={() => this.onPressIn()}
-            onPressOut={() => this.onPressOut()}
-          >
-            <Animated.View
-              style={image,{transform:[{scale: this.state.animatePress}]}}>
-              <Image style={{width: 200, height: 100}} source={require('../../assets/images/opportunity.jpg')}></Image>
-            </Animated.View>
-          </TouchableWithoutFeedback>
-        </View>
+      <View style={container}>
+        <FlatList
+          data={this.state.data}
+          renderItem={this.renderItem}
+          keyExtractor={item => item.id}
+          onItemPress={() => this.props.navigation.navigate('Gallery')}
+        />
+      </View>
     )
   }
-  // render(){
-  //   return (
-  //     <View>
-  //       <Text> This is the Homescreen </Text>
-  //       <Button
-  //         title="Gallery"
-  //         onPress={() => this.props.navigation.navigate('Gallery')}
-  //       />
-  //     </View>
-  //   );
-  // }
+
+
 }
 
 const styles = StyleSheet.create({
@@ -82,10 +72,6 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  image: {
-    width: 200,
-    height: 100
   }
 });
 
