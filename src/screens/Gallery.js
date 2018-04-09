@@ -6,18 +6,21 @@ import {
 } from 'react-native';
 
 class Gallery extends Component{
-  componentDidMount() {
-    this.makeRemoteRequest();
-  }
-
-  makeRemoteRequest = () => {
-    // Fetch Method
-  }
+  // componentDidMount() {
+  //   this.makeRemoteRequest();
+  // }
+  //
+  // makeRemoteRequest = () => {
+  //   // Fetch Method
+  // }
 
   render(){
+    const { params } = this.props.navigation.state;
+    const roverId = params ? params.roverId : null;
+
     return (
       <View>
-        <Text> This is the Gallery </Text>
+        <Text>Rover Id: {JSON.stringify(roverId)}</Text>
       </View>
     );
   }
