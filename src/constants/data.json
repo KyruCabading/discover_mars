@@ -1,0 +1,17 @@
+[
+  {
+    "id": "0",
+    "title": "Curiosity",
+    "image": require("../../assets/images/curiosity.jpg")
+  },
+  {
+    "id": "1",
+    "title": "Opportunity",
+    "image": require("../../assets/images/opportunity.jpg")
+  },
+  {
+    "id": "2",
+    "title": "Spirit",
+    "image": require("../../assets/images/spirit.jpg")
+  }
+]
