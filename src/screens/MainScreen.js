@@ -20,9 +20,6 @@ class MainScreen extends Component{
 
   }
 
-  componentDidMount() {
-    console.log(this.state.data);
-  }
 
   selectedRover() {
     return 1
