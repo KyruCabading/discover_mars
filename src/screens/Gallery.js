@@ -13,22 +13,21 @@ import roverData from '../constants/roverData.json';
 import _ from 'lodash';
 
 
-roverData.photos = _.groupBy(roverData.photos, d => {
-  var options = { year: 'numeric', month: 'long', day: 'numeric' }
-  let earthDate = new Date(Date.parse(d.earth_date))
-  let earthDay = earthDate.toLocaleDateString('en-US', options)
-  return "Sol " + d.sol + " / " + earthDay
-})
+// roverData.photos = _.groupBy(roverData.photos, d => {
+//   var options = { year: 'numeric', month: 'long', day: 'numeric' }
+//   let earthDate = new Date(Date.parse(d.earth_date))
+//   let earthDay = earthDate.toLocaleDateString('en-US', options)
+//   return "Sol " + d.sol + " / " + earthDay
+// })
+//
+// roverData.photos = _.reduce(roverData.photos, (acc, next, index) => {
+//   acc.push({
+//     title: index,
+//     data: next
+//   });
+//   return acc
+// }, [])
 
-roverData.photos = _.reduce(roverData.photos, (acc, next, index) => {
-  acc.push({
-    title: index,
-    data: next
-  });
-  return acc
-}, [])
-
-console.log(roverData.photos);
 class Gallery extends Component{
   constructor(props) {
     super(props)
@@ -59,9 +58,8 @@ class Gallery extends Component{
     return(
       <View style={styles.container}>
       <FlatList
-        key={index}
         numColumns={columns}
-        data={item}
+        data={roverData.photos}
         renderItem={this.renderItem}
         keyExtractor={item => item.id.toString()}
       />
