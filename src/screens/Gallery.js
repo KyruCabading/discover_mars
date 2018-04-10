@@ -5,12 +5,30 @@ import {
   Text,
   StyleSheet,
   FlatList,
+  SectionList,
   Dimensions
 } from 'react-native';
 import ImageElement from '../components/ImageElement.js';
 import roverData from '../constants/roverData.json';
+import _ from 'lodash';
 
 
+roverData.photos = _.groupBy(roverData.photos, d => {
+  var options = { year: 'numeric', month: 'long', day: 'numeric' }
+  let earthDate = new Date(Date.parse(d.earth_date))
+  let earthDay = earthDate.toLocaleDateString('en-US', options)
+  return "Sol " + d.sol + " / " + earthDay
+})
+
+roverData.photos = _.reduce(roverData.photos, (acc, next, index) => {
+  acc.push({
+    title: index,
+    data: next
+  });
+  return acc
+}, [])
+
+console.log(roverData.photos);
 class Gallery extends Component{
   constructor(props) {
     super(props)
@@ -40,15 +58,31 @@ class Gallery extends Component{
 
     return(
       <View style={styles.container}>
-        <FlatList
-          numColumns={columns}
-          data={roverData.photos}
-          renderItem={this.renderItem}
-          keyExtractor={item => item.id.toString()}
-        />
+      <FlatList
+        key={index}
+        numColumns={columns}
+        data={item}
+        renderItem={this.renderItem}
+        keyExtractor={item => item.id.toString()}
+      />
       </View>
     )
   }
+
+
+  // render(){
+  //   const { columns } = this.state
+  //
+  //   return(
+  //     <View style={styles.container}>
+  //     <SectionList
+  //      renderItem={({ item, index, section }) => <Text key={index}>{item.id}</Text>}
+  //      renderSectionHeader={({ section: { title } }) => <Text style={{ fontWeight: 'bold' }}>{title}</Text>}
+  //      sections={roverData.photos}
+  //      keyExtractor={(item, index) => item.id + index} />
+  //     </View>
+  //   )
+  // }
 }
 
 const styles = StyleSheet.create({
