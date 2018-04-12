@@ -3,6 +3,9 @@ import {
   StyleSheet,
   Image
 } from 'react-native';
+import Colors from '../constants/Colors';
+
+
 export default class ImageElement extends Component {
   render() {
     return (
@@ -12,7 +15,7 @@ export default class ImageElement extends Component {
           width: this.props.itemDimension,
           height: this.props.itemDimension,
           margin: 5,
-          backgroundColor: 'green'
+          backgroundColor: Colors.lightGray
         }}
       />
     );
