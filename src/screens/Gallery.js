@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import API from '../config/api';
 import {
   View,
   Text,
@@ -72,7 +71,7 @@ class Gallery extends Component{
         data={section.data}
         renderItem={this.renderItem}
         keyExtractor={item => item.id.toString()}
-        initialNumToRender={2}
+        initialNumToRender={6}
         getItemLayout={( item, index) => (
           {length: itemDimension, offset: itemDimension * index, index}
         )}
