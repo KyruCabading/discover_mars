@@ -44,10 +44,12 @@ class Gallery extends Component{
   }
 
   setModalVisible(visible, imageKey) {
-    console.log('ModalShown')
+    // console.log(this.state.roverData[0].data[0])
     this.setState({
-      modalImage: this.state.roverData.data[imageKey].img_src,
+      modalImage: this.state.roverData[0].data[imageKey].img_src,
       modalVisible: visible
+    },function(){
+      console.log(this.state.modalImage)
     });
 
   }
@@ -63,15 +65,14 @@ class Gallery extends Component{
   renderList = ({ item, section, index }) => {
     const { columns } = this.state,
           WINDOW_WIDTH = Dimensions.get('window').width,
-          itemDimension = (WINDOW_WIDTH-(18*columns))/columns
+          itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
     return (
       <FlatList
         numColumns={columns}
         data={section.data}
         renderItem={this.renderItem}
         keyExtractor={item => item.id.toString()}
-        initialNumToRender={10}
-        handlerMethod={(visible, imageKey) => this.setModalVisible(visible, imageKey)}
+        initialNumToRender={2}
         getItemLayout={( item, index) => (
           {length: itemDimension, offset: itemDimension * index, index}
         )}
@@ -84,11 +85,10 @@ class Gallery extends Component{
       const { columns } = this.state,
             WINDOW_WIDTH = Dimensions.get('window').width,
             itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
-
       return (
         <TouchableWithoutFeedback
           key={index}
-          onPress={() => console.log("Press")}
+          onPress={() => this.setModalVisible(true, Number(index))}
           >
             <View>
               <ImageElement
@@ -112,7 +112,6 @@ class Gallery extends Component{
          sections={roverData.photos}
          keyExtractor={(item, index) => item.id + index}
          initialNumToRender={1}
-         handlerMethod={(visible, imageKey) => this.setModalVisible(visible, imageKey)}
         />
       </View>
     )
