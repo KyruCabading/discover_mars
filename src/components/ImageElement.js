@@ -11,7 +11,8 @@ export default class ImageElement extends Component {
         style={{
           width: this.props.itemDimension,
           height: this.props.itemDimension,
-          margin: 5
+          margin: 5,
+          backgroundColor: 'green'
         }}
       />
     );

@@ -6,11 +6,13 @@ import {
   StyleSheet,
   FlatList,
   SectionList,
-  Dimensions
+  Dimensions,
+  TouchableWithoutFeedback
 } from 'react-native';
 import ImageElement from '../components/ImageElement.js';
 import roverData from '../constants/roverData.json';
 import _ from 'lodash';
+
 
 /* START Embedded SectionList x FlatList - WIP */
 roverData.photos = _.groupBy(roverData.photos, d => {
@@ -38,17 +40,25 @@ class Gallery extends Component{
       roverData: roverData.photos,
       columns: 3
     }
+    this.setModalVisible.bind(this)
+  }
+
+  setModalVisible(visible, imageKey) {
+    console.log('ModalShown')
+    this.setState({
+      modalImage: this.state.roverData.data[imageKey].img_src,
+      modalVisible: visible
+    });
+
+  }
+
+  getImage() {
+    return this.state.modalImage;
   }
 
   renderHeader = ({ section: { title } }) => (
     <Text style={{ fontWeight: 'bold' }}>{title}</Text>
   )
-
-  // renderList = ({ item, section, index }) => {
-  //   return (
-  //     <Text key={item.id}>{section.data[index].id}</Text>
-  //   )
-  // }
 
   renderList = ({ item, section, index }) => {
     const { columns } = this.state,
@@ -60,24 +70,34 @@ class Gallery extends Component{
         data={section.data}
         renderItem={this.renderItem}
         keyExtractor={item => item.id.toString()}
-        initialNumToRender={12}
+        initialNumToRender={10}
+        handlerMethod={(visible, imageKey) => this.setModalVisible(visible, imageKey)}
         getItemLayout={( item, index) => (
           {length: itemDimension, offset: itemDimension * index, index}
         )}
       />
     )
+
   }
 
-    renderItem = ({item}) => {
+    renderItem = ({item, index}) => {
       const { columns } = this.state,
             WINDOW_WIDTH = Dimensions.get('window').width,
-            itemDimension = (WINDOW_WIDTH-(18*columns))/columns
+            itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
+
       return (
-        <ImageElement
-          columns={this.state.columns}
-          itemDimension={itemDimension}
-          imgsource={item.img_src}
-        />
+        <TouchableWithoutFeedback
+          key={index}
+          onPress={() => console.log("Press")}
+          >
+            <View>
+              <ImageElement
+                columns={this.state.columns}
+                itemDimension={itemDimension}
+                imgsource={item.img_src}
+              />
+            </View>
+        </TouchableWithoutFeedback>
       )
     };
 
@@ -86,13 +106,14 @@ class Gallery extends Component{
 
     return(
       <View style={styles.container}>
-      <SectionList
-       renderItem={this.renderList}
-       renderSectionHeader={this.renderHeader}
-       sections={roverData.photos}
-       keyExtractor={(item, index) => item.id + index} />
-       columns={this.state.columns}
-       initialNumToRender={12}
+        <SectionList
+         renderItem={this.renderList}
+         renderSectionHeader={this.renderHeader}
+         sections={roverData.photos}
+         keyExtractor={(item, index) => item.id + index}
+         initialNumToRender={1}
+         handlerMethod={(visible, imageKey) => this.setModalVisible(visible, imageKey)}
+        />
       </View>
     )
   }
