@@ -30,7 +30,7 @@ class MainScreen extends Component{
       title={item.title}
       image={item.image}
       onItemPress={() => {this.props.navigation.navigate('Gallery', {
-          roverId: item.id
+          selectedRover: item.id
         });
       }}
     />
