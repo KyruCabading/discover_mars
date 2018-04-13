@@ -15,6 +15,8 @@ import _ from 'lodash';
 
 
 /* START Embedded SectionList x FlatList - WIP */
+
+
 roverData.photos = _.groupBy(roverData.photos, d => {
   var options = { year: 'numeric', month: 'long', day: 'numeric' }
   let earthDate = new Date(Date.parse(d.earth_date))
@@ -30,19 +32,24 @@ roverData.photos = _.reduce(roverData.photos, (acc, next, index) => {
   return acc
 }, [])
 console.log("Initial State Data: " + roverData.photos[0].data[0].img_src)
+
+
 class Gallery extends Component{
   constructor(props) {
     super(props)
     this.state = {
       modalVisible: false,
-      modalImage: roverData.photos[0].data[0].img_src,
       roverData: roverData.photos,
+      modalImage: "",
       columns: 3
     }
+    console.log(this.state.roverData[0].data[0].img_src);
     this.setModalVisible.bind(this)
   }
 
   setModalVisible(visible, imageKey) {
+    console.log(this.props.selectedRover)
+
     console.log(imageKey)
     if(imageKey == null) {
       console.log("ImageKey Doesn't Exist")
@@ -51,12 +58,13 @@ class Gallery extends Component{
       })
 
     } else {
-      console.log("ImageKey Exists")
       this.setState({
         modalVisible: visible,
-        modalImage: roverData.photos[0].data[imageKey].img_src
+      })
+      this.setState({
+        modalImage: this.state.roverData[0].data[imageKey].img_src
       }, function(){
-        console.log("Done Both")
+        console.log("Modal set to: " + this.state.modalImage)
       })
 
     }
@@ -156,7 +164,7 @@ class Gallery extends Component{
         <SectionList
          renderItem={this.renderList}
          renderSectionHeader={this.renderHeader}
-         sections={roverData.photos}
+         sections={this.state.roverData}
          keyExtractor={(item, index) => item.id + index}
          initialNumToRender={1}
         />
