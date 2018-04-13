@@ -5,6 +5,25 @@ import {
 } from 'react-native';
 import Colors from '../constants/Colors';
 
+// export default class ImageElement extends Component {
+//   render() {
+//     return (
+//       <Image
+//         source={{uri: this.props.imgsource}}
+//         style={styles.image}
+//       />
+//     );
+//   }
+// }
+//
+// const styles = StyleSheet.create({
+//   image: {
+//     flex: 1,
+//     width: null,
+//     alignSelf: 'stretch'
+//   }
+// })
+
 
 export default class ImageElement extends Component {
   render() {

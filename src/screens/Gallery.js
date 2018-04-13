@@ -6,7 +6,8 @@ import {
   FlatList,
   SectionList,
   Dimensions,
-  TouchableWithoutFeedback
+  TouchableWithoutFeedback,
+  Modal
 } from 'react-native';
 import ImageElement from '../components/ImageElement.js';
 import roverData from '../constants/roverData.json';
@@ -28,14 +29,13 @@ roverData.photos = _.reduce(roverData.photos, (acc, next, index) => {
   });
   return acc
 }, [])
-
-
+console.log("Initial State Data: " + roverData.photos[0].data[0].img_src)
 class Gallery extends Component{
   constructor(props) {
     super(props)
     this.state = {
       modalVisible: false,
-      modalImage: null,
+      modalImage: roverData.photos[0].data[0].img_src,
       roverData: roverData.photos,
       columns: 3
     }
@@ -43,13 +43,47 @@ class Gallery extends Component{
   }
 
   setModalVisible(visible, imageKey) {
-    // console.log(this.state.roverData[0].data[0])
-    this.setState({
-      modalImage: this.state.roverData[0].data[imageKey].img_src,
-      modalVisible: visible
-    },function(){
-      console.log(this.state.modalImage)
-    });
+    console.log(imageKey)
+    if(imageKey == null) {
+      console.log("ImageKey Doesn't Exist")
+      this.setState({
+        modalVisible: visible
+      })
+
+    } else {
+      console.log("ImageKey Exists")
+      this.setState({
+        modalVisible: visible,
+        modalImage: roverData.photos[0].data[imageKey].img_src
+      }, function(){
+        console.log("Done Both")
+      })
+
+    }
+    // console.log(roverData.photos[0].data[imageKey].img_src);
+    // const props = {
+    //   visible: visible,
+    //   imageKey: imageKey,
+    //   newImage: roverData.photos[0].data[imageKey].img_src
+    // }
+    // console.log(props)
+    // // this.setState({
+    // //   modalImage: roverData.photos[0].data[imageKey].img_src,
+    // //   modalVisible: visible
+    // // },function(){
+    // // });
+    //
+    // {
+    //   modalImage: roverData.photos[0].data[imageKey].img_src,
+    //   modalVisible: visible
+    // },function(){
+    // }
+    //
+    // this.setState((previousState, props) => {
+    //   modalImage: props.newImage || previousState.modalImage,
+    //
+    //
+    // });
 
   }
 
@@ -85,6 +119,7 @@ class Gallery extends Component{
             WINDOW_WIDTH = Dimensions.get('window').width,
             itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
       return (
+
         <TouchableWithoutFeedback
           key={index}
           onPress={() => this.setModalVisible(true, Number(index))}
@@ -101,10 +136,23 @@ class Gallery extends Component{
     };
 
   render(){
-    const { columns } = this.state
+    const { columns } = this.state,
+          WINDOW_WIDTH = Dimensions.get('window').width,
+          itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
 
     return(
       <View style={styles.container}>
+      <Modal style={styles.modal} animationType={'fade'}
+             transparent={true} visible={this.state.modalVisible}
+             onRequestClose={() => {}}>
+             <View style={styles.modal}>
+              <Text style={styles.text}
+                    onPress={() => {this.setModalVisible(false)}}>Close</Text>
+              <Text style={styles.text}>{this.state.modalImage}</Text>
+              <ImageElement columns={this.state.columns} itemDimension={itemDimension} imgsource={this.state.modalImage}/>
+
+              </View>
+      </Modal>
         <SectionList
          renderItem={this.renderList}
          renderSectionHeader={this.renderHeader}
@@ -112,6 +160,7 @@ class Gallery extends Component{
          keyExtractor={(item, index) => item.id + index}
          initialNumToRender={1}
         />
+
       </View>
     )
   }
@@ -123,6 +172,14 @@ const styles = StyleSheet.create({
     margin: 10,
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  modal: {
+    flex: 1,
+    padding: 40,
+    backgroundColor: 'rgba(0,0,0, 0.9)'
+  },
+  text: {
+    color: '#fff'
   }
 });
 
