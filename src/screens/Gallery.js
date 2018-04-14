@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import _ from 'lodash';
 import {
   View,
   Text,
@@ -10,28 +11,28 @@ import {
   Modal
 } from 'react-native';
 import ImageElement from '../components/ImageElement.js';
-import roverData from '../constants/roverData.json';
-import _ from 'lodash';
+// import newData from '../constants/roverData.json';
 
+
+// import { fetchData } from '../config/api';
 
 /* START Embedded SectionList x FlatList - WIP */
 
-
-roverData.photos = _.groupBy(roverData.photos, d => {
-  var options = { year: 'numeric', month: 'long', day: 'numeric' }
-  let earthDate = new Date(Date.parse(d.earth_date))
-  let earthDay = earthDate.toLocaleDateString('en-US', options)
-  return "Sol " + d.sol + " / " + earthDay
-})
-
-roverData.photos = _.reduce(roverData.photos, (acc, next, index) => {
-  acc.push({
-    title: index,
-    data: next
-  });
-  return acc
-}, [])
-console.log("Initial State Data: " + roverData.photos[0].data[0].img_src)
+//
+// newData.photos = _.groupBy(newData.photos, d => {
+//   var options = { year: 'numeric', month: 'long', day: 'numeric' }
+//   let earthDate = new Date(Date.parse(d.earth_date))
+//   let earthDay = earthDate.toLocaleDateString('en-US', options)
+//   return "Sol " + d.sol + " / " + earthDay
+// })
+//
+// newData.photos = _.reduce(newData.photos, (acc, next, index) => {
+//   acc.push({
+//     title: index,
+//     data: next
+//   });
+//   return acc
+// }, [])
 
 
 class Gallery extends Component{
@@ -39,13 +40,79 @@ class Gallery extends Component{
     super(props)
     this.state = {
       modalVisible: false,
-      roverData: roverData.photos,
+      roverData: [],
       modalImage: "",
       columns: 3
     }
-    console.log(this.state.roverData[0].data[0].img_src);
     this.setModalVisible.bind(this)
   }
+
+  componentDidMount(){
+    // console.log(this.fetchData(parseInt(this.props.navigation.state.params.selectedRover), 1));
+    fetch(
+      this.buildURL(parseInt(this.props.navigation.state.params.selectedRover), 1)
+    )
+    .then((response)=>response.json())
+    .then((data)=>{
+      const convertedData = this.convertDataToSections(data)
+      console.log("convertedData")
+      console.log(convertedData.photos)
+      this.setState({
+        roverData: convertedData.photos
+      },function(){
+        console.log("stateData")
+        console.log(this.state.roverData);
+      })
+    })
+
+  }
+
+  buildURL(selectedRover, pageNumber) {
+    // Build URL
+    let apiKey = '&api_key=aUAGk6rR3RkkPPjDdZ0I2ov1Tp4SI6azVbWI7d9k'
+    let baseUrl = 'https://api.nasa.gov/mars-photos/api/v1/rovers/';
+    let roverName = '';
+    switch(parseInt(selectedRover)) {
+      case 0:
+        roverName = "curiosity" + "/photos?"
+        console.log("Curiosity")
+        break;
+      case 1:
+        roverName = "opportunity" + "/photos?"
+        console.log("Opportunity")
+
+        break;
+      case 2:
+        roverName = "spirit" + "/photos?"
+        console.log("Spirit")
+
+        break;
+      default:
+    }
+    return URL = baseUrl + roverName + "sol=max&page=" + pageNumber + apiKey;
+  }
+
+
+
+  convertDataToSections(data) {
+    data.photos = _.groupBy(data.photos, d => {
+      var options = { year: 'numeric', month: 'long', day: 'numeric' }
+      let earthDate = new Date(Date.parse(d.earth_date))
+      let earthDay = earthDate.toLocaleDateString('en-US', options)
+      return "Sol " + d.sol + " / " + earthDay
+    })
+
+    data.photos = _.reduce(data.photos, (acc, next, index) => {
+      acc.push({
+        title: index,
+        data: next
+      });
+      return acc
+    }, [])
+
+    return data;
+  }
+
 
   setModalVisible(visible, imageKey) {
     console.log(this.props.selectedRover)
