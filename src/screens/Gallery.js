@@ -8,7 +8,8 @@ import {
   SectionList,
   Dimensions,
   TouchableWithoutFeedback,
-  Modal
+  Modal,
+  Image
 } from 'react-native';
 import ImageElement from '../components/ImageElement.js';
 // import newData from '../constants/roverData.json';
@@ -55,13 +56,10 @@ class Gallery extends Component{
     .then((response)=>response.json())
     .then((data)=>{
       const convertedData = this.convertDataToSections(data)
-      console.log("convertedData")
-      console.log(convertedData.photos)
       this.setState({
         roverData: convertedData.photos
       },function(){
-        console.log("stateData")
-        console.log(this.state.roverData);
+        console.log("stateRoverData", this.state.roverData);
       })
     })
 
@@ -89,7 +87,7 @@ class Gallery extends Component{
         break;
       default:
     }
-    return URL = baseUrl + roverName + "sol=max&page=" + pageNumber + apiKey;
+    return URL = baseUrl + roverName + "sol=1000&page=" + pageNumber + apiKey;
   }
 
 
@@ -105,7 +103,9 @@ class Gallery extends Component{
     data.photos = _.reduce(data.photos, (acc, next, index) => {
       acc.push({
         title: index,
-        data: next
+        data: [{
+          item: next
+        }]
       });
       return acc
     }, [])
@@ -115,11 +115,7 @@ class Gallery extends Component{
 
 
   setModalVisible(visible, imageKey) {
-    console.log(this.props.selectedRover)
-
-    console.log(imageKey)
     if(imageKey == null) {
-      console.log("ImageKey Doesn't Exist")
       this.setState({
         modalVisible: visible
       })
@@ -129,9 +125,8 @@ class Gallery extends Component{
         modalVisible: visible,
       })
       this.setState({
-        modalImage: this.state.roverData[0].data[imageKey].img_src
+        modalImage: this.state.roverData[0].data[0].item[imageKey].img_src
       }, function(){
-        console.log("Modal set to: " + this.state.modalImage)
       })
 
     }
@@ -166,20 +161,32 @@ class Gallery extends Component{
     return this.state.modalImage;
   }
 
-  renderHeader = ({ section: { title } }) => (
-    <Text style={{ fontWeight: 'bold' }}>{title}</Text>
-  )
+  genListSection = (index, myData) => ([{
+    key: `${index}`,
+    title: myData,
+    data: myData
+  }])
+
+  renderHeader = ({section: {title}}) => {
+    // // const title = item.section.data["0"].title || "Hello"
+    // const title = "hi" || "Hello"
+    return (
+      // <View></View>
+      <Text style={{ fontWeight: 'bold' }}>{title}</Text>
+    )
+  }
 
   renderList = ({ item, section, index }) => {
     const { columns } = this.state,
           WINDOW_WIDTH = Dimensions.get('window').width,
           itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
+    console.log("renderList", item);
     return (
       <FlatList
         numColumns={columns}
-        data={section.data}
+        data={item.item}
         renderItem={this.renderItem}
-        keyExtractor={item => item.id.toString()}
+        keyExtractor={item => item.id}
         initialNumToRender={6}
         getItemLayout={( item, index) => (
           {length: itemDimension, offset: itemDimension * index, index}
@@ -189,10 +196,15 @@ class Gallery extends Component{
 
   }
 
+  // Section List
+  // { title: 'Title1', data: ['item1', 'item2'] },
+  // { title: 'Title2', data: ['item3', 'item4'] },
+  // { title: 'Title3', data: ['item5', 'item6'] },
     renderItem = ({item, index}) => {
       const { columns } = this.state,
             WINDOW_WIDTH = Dimensions.get('window').width,
             itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
+
       return (
 
         <TouchableWithoutFeedback
@@ -213,7 +225,8 @@ class Gallery extends Component{
   render(){
     const { columns } = this.state,
           WINDOW_WIDTH = Dimensions.get('window').width,
-          itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
+          itemDimension = (WINDOW_WIDTH-(18*columns))/columns,
+          { roverData } = this.state;
 
     return(
       <View style={styles.container}>
@@ -224,14 +237,13 @@ class Gallery extends Component{
               <Text style={styles.text}
                     onPress={() => {this.setModalVisible(false)}}>Close</Text>
               <Text style={styles.text}>{this.state.modalImage}</Text>
-              <ImageElement columns={this.state.columns} itemDimension={itemDimension} imgsource={this.state.modalImage}/>
-
+              <Image style={styles.modalImageContainer} source={{uri:this.state.modalImage}}/>
               </View>
       </Modal>
         <SectionList
          renderItem={this.renderList}
          renderSectionHeader={this.renderHeader}
-         sections={this.state.roverData}
+         sections={roverData}
          keyExtractor={(item, index) => item.id + index}
          initialNumToRender={1}
         />
@@ -252,6 +264,11 @@ const styles = StyleSheet.create({
     flex: 1,
     padding: 40,
     backgroundColor: 'rgba(0,0,0, 0.9)'
+  },
+  modalImageContainer: {
+    flex: 1,
+    width: null,
+    height: null
   },
   text: {
     color: '#fff'
