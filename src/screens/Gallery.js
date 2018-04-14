@@ -40,9 +40,13 @@ class Gallery extends Component{
   constructor(props) {
     super(props)
     this.state = {
-      modalVisible: false,
       roverData: [],
-      modalImage: "",
+      modal: {
+        visible: false,
+        image: "",
+        camera: "",
+        sol: ""
+      },
       columns: 3
     }
     this.setModalVisible.bind(this)
@@ -114,18 +118,26 @@ class Gallery extends Component{
   }
 
 
-  setModalVisible(visible, imageKey) {
+  setModalVisible(bool, imageKey) {
     if(imageKey == null) {
       this.setState({
-        modalVisible: visible
+        modal: {
+          visible: bool
+        }
       })
 
     } else {
       this.setState({
-        modalVisible: visible,
+        modal: {
+          visible: bool
+        }
       })
       this.setState({
-        modalImage: this.state.roverData[0].data[0].item[imageKey].img_src
+        modal: {
+          image: this.state.roverData[0].data[0].item[imageKey].img_src,
+          camera: this.state.roverData[0].data[0].item[imageKey].camera.name,
+          sol: this.state.roverData[0].data[0].item[imageKey].sol
+        }
       }, function(){
       })
 
@@ -158,7 +170,7 @@ class Gallery extends Component{
   }
 
   getImage() {
-    return this.state.modalImage;
+    return this.state.modal.image;
   }
 
   genListSection = (index, myData) => ([{
@@ -226,18 +238,20 @@ class Gallery extends Component{
     const { columns } = this.state,
           WINDOW_WIDTH = Dimensions.get('window').width,
           itemDimension = (WINDOW_WIDTH-(18*columns))/columns,
-          { roverData } = this.state;
+          { roverData, modal } = this.state;
 
     return(
       <View style={styles.container}>
       <Modal style={styles.modal} animationType={'fade'}
-             transparent={true} visible={this.state.modalVisible}
+             transparent={true} visible={modal.visible}
              onRequestClose={() => {}}>
              <View style={styles.modal}>
-              <Text style={styles.text}
+              <Text style={styles.text, {textAlign: 'right', color: 'white', fontSize: 16}}
                     onPress={() => {this.setModalVisible(false)}}>Close</Text>
-              <Text style={styles.text}>{this.state.modalImage}</Text>
-              <Image style={styles.modalImageContainer} source={{uri:this.state.modalImage}}/>
+              <Image style={styles.modalImageContainer} source={{uri:modal.image}}/>
+              <Text style={styles.text}>Camera: {modal.camera}</Text>
+              <Text style={styles.text}>Sol: {modal.sol}</Text>
+
               </View>
       </Modal>
         <SectionList
