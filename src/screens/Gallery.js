@@ -12,29 +12,7 @@ import {
   Image
 } from 'react-native';
 import ImageElement from '../components/ImageElement.js';
-// import newData from '../constants/roverData.json';
-
-
-// import { fetchData } from '../config/api';
-
-/* START Embedded SectionList x FlatList - WIP */
-
-//
-// newData.photos = _.groupBy(newData.photos, d => {
-//   var options = { year: 'numeric', month: 'long', day: 'numeric' }
-//   let earthDate = new Date(Date.parse(d.earth_date))
-//   let earthDay = earthDate.toLocaleDateString('en-US', options)
-//   return "Sol " + d.sol + " / " + earthDay
-// })
-//
-// newData.photos = _.reduce(newData.photos, (acc, next, index) => {
-//   acc.push({
-//     title: index,
-//     data: next
-//   });
-//   return acc
-// }, [])
-
+import Colors from '../constants/Colors';
 
 class Gallery extends Component{
   constructor(props) {
@@ -47,32 +25,30 @@ class Gallery extends Component{
         camera: "",
         sol: ""
       },
-      columns: 3
+      gallery: {
+        columns: 2,
+        currentPage: 1,
+        selectedRover: this.props.navigation.state.params.selectedRover
+      },
+      loading: false,
+      error: null,
+      refreshing: false,
+
     }
     this.setModalVisible.bind(this)
   }
 
   componentDidMount(){
-    // console.log(this.fetchData(parseInt(this.props.navigation.state.params.selectedRover), 1));
-    fetch(
-      this.buildURL(parseInt(this.props.navigation.state.params.selectedRover), 1)
-    )
-    .then((response)=>response.json())
-    .then((data)=>{
-      const convertedData = this.convertDataToSections(data)
-      this.setState({
-        roverData: convertedData.photos
-      },function(){
-        console.log("stateRoverData", this.state.roverData);
-      })
-    })
+    const { selectedRover, currentPage } = this.state.gallery
+    this.setState({ loading: true });
+    this.requestData(selectedRover, currentPage)
 
   }
 
-  buildURL(selectedRover, pageNumber) {
+
+  requestData(selectedRover, pageNumber) {
     // Build URL
-    let apiKey = '&api_key=aUAGk6rR3RkkPPjDdZ0I2ov1Tp4SI6azVbWI7d9k'
-    let baseUrl = 'https://api.nasa.gov/mars-photos/api/v1/rovers/';
+    const apiKey = '&api_key=aUAGk6rR3RkkPPjDdZ0I2ov1Tp4SI6azVbWI7d9k'
     let roverName = '';
     switch(parseInt(selectedRover)) {
       case 0:
@@ -91,7 +67,34 @@ class Gallery extends Component{
         break;
       default:
     }
-    return URL = baseUrl + roverName + "sol=1000&page=" + pageNumber + apiKey;
+    const URL = 'https://api.nasa.gov/mars-photos/api/v1/rovers/' + roverName + "sol=1000&page=" + pageNumber + apiKey;
+
+    fetch(URL)
+    .then((response)=>response.json())
+    .then((data)=>{
+      const convertedData = this.convertDataToSections(data)
+      this.setState({
+        roverData: convertedData.photos,
+        loading: false,
+        refreshing: false,
+      })
+    })
+    .catch(error => this.setState({ error, loading: false, refreshing: false }));
+
+  }
+
+  requestMoreData(){
+    fetch(URL)
+    .then((response)=>response.json())
+    .then((data)=>{
+      const convertedData = this.convertDataToSections(data)
+      this.setState({
+        roverData: convertedData.photos.push(),
+        loading: false,
+        refreshing: false,
+      })
+    })
+    .catch(error => this.setState({ error, loading: false, refreshing: false }));
   }
 
 
@@ -142,31 +145,20 @@ class Gallery extends Component{
       })
 
     }
-    // console.log(roverData.photos[0].data[imageKey].img_src);
-    // const props = {
-    //   visible: visible,
-    //   imageKey: imageKey,
-    //   newImage: roverData.photos[0].data[imageKey].img_src
-    // }
-    // console.log(props)
-    // // this.setState({
-    // //   modalImage: roverData.photos[0].data[imageKey].img_src,
-    // //   modalVisible: visible
-    // // },function(){
-    // // });
-    //
-    // {
-    //   modalImage: roverData.photos[0].data[imageKey].img_src,
-    //   modalVisible: visible
-    // },function(){
-    // }
-    //
-    // this.setState((previousState, props) => {
-    //   modalImage: props.newImage || previousState.modalImage,
-    //
-    //
-    // });
+  }
 
+  handleRefresh = () => {
+    const { selectedRover, currentPage } = this.state.gallery;
+    this.requestData(this.state.gallery.selectedRover, 1)
+    console.log('Refreshed')
+    // this.setState({
+    //   gallery: {
+    //     currentPage: 2
+    //   },
+    //   refreshing: true,
+    // }, () => {
+    //   this.requestData(selectedRover, currentPage)
+    // })
   }
 
   getImage() {
@@ -189,13 +181,13 @@ class Gallery extends Component{
   }
 
   renderList = ({ item, section, index }) => {
-    const { columns } = this.state,
+    const { columns } = this.state.gallery,
           WINDOW_WIDTH = Dimensions.get('window').width,
           itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
     console.log("renderList", item);
     return (
       <FlatList
-        numColumns={columns}
+        numColumns={2}
         data={item.item}
         renderItem={this.renderItem}
         keyExtractor={item => item.id}
@@ -213,9 +205,9 @@ class Gallery extends Component{
   // { title: 'Title2', data: ['item3', 'item4'] },
   // { title: 'Title3', data: ['item5', 'item6'] },
     renderItem = ({item, index}) => {
-      const { columns } = this.state,
+      const { columns } = this.state.gallery,
             WINDOW_WIDTH = Dimensions.get('window').width,
-            itemDimension = (WINDOW_WIDTH-(18*columns))/columns;
+            itemDimension = (WINDOW_WIDTH-(20*columns))/columns;
 
       return (
 
@@ -225,7 +217,7 @@ class Gallery extends Component{
           >
             <View>
               <ImageElement
-                columns={this.state.columns}
+                columns={columns}
                 itemDimension={itemDimension}
                 imgsource={item.img_src}
               />
@@ -235,7 +227,7 @@ class Gallery extends Component{
     };
 
   render(){
-    const { columns } = this.state,
+    const { columns } = this.state.gallery,
           WINDOW_WIDTH = Dimensions.get('window').width,
           itemDimension = (WINDOW_WIDTH-(18*columns))/columns,
           { roverData, modal } = this.state;
@@ -260,6 +252,8 @@ class Gallery extends Component{
          sections={roverData}
          keyExtractor={(item, index) => item.id + index}
          initialNumToRender={1}
+         refreshing={this.state.refreshing}
+         onRefresh={this.handleRefresh}
         />
 
       </View>
@@ -282,7 +276,8 @@ const styles = StyleSheet.create({
   modalImageContainer: {
     flex: 1,
     width: null,
-    height: null
+    height: null,
+    backgroundColor: Colors.lightGray
   },
   text: {
     color: '#fff'
