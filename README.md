@@ -4,6 +4,4 @@ Our app’s goal is to romanticize Mars by letting people know how beautiful it 
 that provide us with imaginary from Mars and you will build a React Native app for iOS and Android that
 displays it.
 
-![test image size](assets/images/DiscoverMars-iphone6.jpg){:height="50%" width="50%"}
-
-![Discover Mars App on iPhone 6](assets/images/DiscoverMars-iphone6.jpg)
+![Discover Mars App on iPhone 6](assets/images/DiscoverMars-iphone6.jpg?v=4&s=200)
