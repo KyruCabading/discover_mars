@@ -33,7 +33,7 @@ class MainScreen extends Component{
         landingDate: "",
         maxSol: null,
         photos: null,
-        roverImage: '',
+        roverImage: require('../../assets/images/curiosity.jpg'),
       }
     }
 

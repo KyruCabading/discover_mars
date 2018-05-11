@@ -9,6 +9,7 @@ import {
   StyleSheet,
   FlatList,
   SectionList,
+  Button,
   Dimensions,
   TouchableWithoutFeedback,
   Modal,
@@ -16,14 +17,21 @@ import {
   ActivityIndicator,
   RootView
 } from 'react-native';
-import ImageElement from '../components/ImageElement.js';
+import ImageElement from '../components/ImageElement';
+import NavigateButton from '../components/NavigateButton';
 import Colors from '../constants/Colors';
 
-class Gallery extends Component{
+class Gallery extends Component {
+  static navigationOptions = ({ navigation }) => ({
+    headerRight: NavigateButton(navigation, 'Settings', {
+      cameras: navigation.state.params.cameras
+    }),
+    title: navigation.state.params.roverManifest.name
+  });
+
   constructor(props) {
     super(props)
     this.state = {
-      roverManifest: this.props.navigation.state.params.roverManifest,
       rawData: [],
       roverData: [],
       modal: {
@@ -34,7 +42,10 @@ class Gallery extends Component{
       },
       gallery: {
         currentPage: 0,
-        selectedRover: this.props.navigation.state.params.selectedRover,
+      },
+      cameras: {
+        fhaz: false,
+        rhaz: false,
       },
       loading: false,
       error: null,
@@ -45,13 +56,13 @@ class Gallery extends Component{
   }
 
   componentDidMount(){
-    console.log("TS: ", this.props.navigation.state.params.roverManifest.name)
     this.setState({ init: true },()=>{
       this.requestData()
     });
-
+    this.props.navigation.setParams({
+      cameras: this.state.cameras
+    });
   }
-
 
   requestData = () => {
     // Build URL

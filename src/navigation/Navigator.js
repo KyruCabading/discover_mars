@@ -3,22 +3,10 @@ import { StackNavigator } from 'react-navigation';
 import { Text, Button } from 'react-native';
 import MainScreen from '../screens/MainScreen';
 import Gallery from '../screens/Gallery';
+import Settings from '../screens/Settings';
 import Colors from '../constants/Colors';
 
 
-const RightBarButton = (title, onPress) => {
-  return (
-    <Button
-      title={title}
-      onPress={onPress} />
-  )
-}
-
-const SettingsButton = (navigation) => {
-  const { navigate } = navigation;
-  const onPress = () => {navigate('MainScreen')}
-  return RightBarButton('...', onPress)
-}
 
 const AppNavigator = StackNavigator({
 
@@ -38,9 +26,15 @@ const AppNavigator = StackNavigator({
   Gallery: {
     screen : Gallery,
     navigationOptions: ({ navigation }) => ({
-      title: "Mars Rover Gallery",
-      headerRight: SettingsButton(navigation),
-    })}
+    })
+  },
+
+  Settings: {
+    screen: Settings,
+    navigationOptions: ({ navigation }) => ({
+      title: "Settings"
+    })
+  }
 
 })
 
